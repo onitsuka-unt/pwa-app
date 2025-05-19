@@ -8,7 +8,7 @@ precacheAndRoute(self.__WB_MANIFEST);
 if (Notification.permission === 'granted') {
   const notificationObject = {
     body: 'ここをクリックしてメッセージを表示してください。',
-    data: { url: `${self.location.origin}/price` },
+    data: { url: `${self.location.origin}/pwa-price/price` },
   };
   self.registration.showNotification('メッセージがあります', notificationObject);
 }
