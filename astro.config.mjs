@@ -21,7 +21,7 @@ export default defineConfig({
       },
       // includeAssets: ['favicon.ico', 'apple-touch-icon.png'], // Service Workerのプリキャッシュに含めるアセット
       manifest: {
-        display: 'standalone',
+        display: 'minimal-ui',
         name: 'PWA Practice Apps',
         short_name: 'PWA Apps',
         description: 'PWAサンプル用のアプリケーションになります。',
