@@ -3,10 +3,12 @@ import { defineConfig } from 'astro/config';
 import AstroPWA from '@vite-pwa/astro';
 import iconsData from './icons.json';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://onitsuka-unt.github.io',
-  base: '/pwa-app/',
+  ...(isDev ? {} : { base: '/pwa-app/' }),
   integrations: [
     AstroPWA({
       strategies: 'injectManifest',
@@ -29,14 +31,16 @@ export default defineConfig({
       },
     }),
   ],
-  // vite: {
-  //   server: {
-  //     https: {
-  //       key: fs.readFileSync('./localhost-key.pem'),
-  //       cert: fs.readFileSync('./localhost.pem'),
-  //     },
-  //   },
-  // },
+  vite: isDev
+    ? {
+        server: {
+          https: {
+            key: fs.readFileSync('./localhost-key.pem'),
+            cert: fs.readFileSync('./localhost.pem'),
+          },
+        },
+      }
+    : undefined,
   build: {
     inlineStylesheets: 'never',
   },
