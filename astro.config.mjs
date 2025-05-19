@@ -28,14 +28,14 @@ export default defineConfig({
       },
     }),
   ],
-  vite: {
-    server: {
-      https: {
-        key: fs.readFileSync('./localhost-key.pem'),
-        cert: fs.readFileSync('./localhost.pem'),
-      },
-    },
-  },
+  // vite: {
+  //   server: {
+  //     https: {
+  //       key: fs.readFileSync('./localhost-key.pem'),
+  //       cert: fs.readFileSync('./localhost.pem'),
+  //     },
+  //   },
+  // },
   build: {
     inlineStylesheets: 'never',
   },
