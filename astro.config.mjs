@@ -5,6 +5,7 @@ import iconsData from './icons.json';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://onitsuka-unt.github.io',
   integrations: [
     AstroPWA({
       strategies: 'injectManifest',
@@ -36,6 +37,6 @@ export default defineConfig({
     },
   },
   build: {
-    inlineStylesheets: "never",
+    inlineStylesheets: 'never',
   },
 });
