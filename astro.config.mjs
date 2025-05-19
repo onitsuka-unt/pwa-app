@@ -21,13 +21,13 @@ export default defineConfig({
       },
       // includeAssets: ['favicon.ico', 'apple-touch-icon.png'], // Service Workerのプリキャッシュに含めるアセット
       manifest: {
-        display: 'standalone',
+        display: 'fullscreen',
         name: 'PWA Practice Apps',
         short_name: 'PWA Apps',
         description: 'PWAサンプル用のアプリケーションになります。',
         icons: iconsData.icons, // 各サイズごとのアイコンは下記で生成 https://www.pwabuilder.com/imageGenerator
-        // background_color: '#ffffff',
-        // theme_color: '#000000',
+        background_color: '#ffffff',
+        theme_color: '#000000',
       },
     }),
   ],
