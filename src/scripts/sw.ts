@@ -1,5 +1,5 @@
 import { precacheAndRoute } from 'workbox-precaching';
-import { BASE_URL } from '@/const';
+import { BASE_URL } from '../const';
 
 declare let self: ServiceWorkerGlobalScope;
 precacheAndRoute(self.__WB_MANIFEST);
