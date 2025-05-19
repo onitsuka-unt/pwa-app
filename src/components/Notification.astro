@@ -1,10 +1,14 @@
+---
+import { BASE_URL } from '@/const';
+---
+
 <div>
   <h1>PWAプッシュ通知チェック</h1>
   <div class="container">
     <button data-request-notification>通知を許可する</button>
     <button data-notification>モック通知を送信</button>
     <button data-redirect-notification>モック通知を送信して通知からURL遷移</button>
-    <a href="/price">料金ページへ飛ぶ</a>
+    <a href=`${BASE_URL}/price`>料金ページへ飛ぶ</a>
   </div>
 </div>
 
@@ -32,6 +36,8 @@
 </style>
 
 <script>
+  import { BASE_URL } from '@/const';
+
   const sendMockNotification = async () => {
     const permission = await Notification.requestPermission();
 
@@ -72,7 +78,7 @@
         registration.showNotification('遷移通知', {
           body: 'クリックで料金ページへ移動します',
           data: {
-            url: '/price',
+            url: `${BASE_URL}/price`,
           },
         });
       } catch (error) {
