@@ -1,0 +1,28 @@
+---
+import { pwaInfo } from 'virtual:pwa-info';
+---
+<!doctype html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro Basics</title>
+		<script src="/src/scripts/pwa.ts"></script>
+		{ pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> }
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style>
+	*,
+	*::before,
+	*::after {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+</style>
