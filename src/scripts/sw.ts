@@ -1,4 +1,5 @@
 import { precacheAndRoute } from 'workbox-precaching';
+import { BASE_URL } from '@/const';
 
 declare let self: ServiceWorkerGlobalScope;
 precacheAndRoute(self.__WB_MANIFEST);
@@ -8,7 +9,7 @@ precacheAndRoute(self.__WB_MANIFEST);
 if (Notification.permission === 'granted') {
   const notificationObject = {
     body: 'ここをクリックしてメッセージを表示してください。',
-    data: { url: `${self.location.origin}/pwa-price/price` },
+    data: { url: `${self.location.origin}${BASE_URL}/price` },
   };
   self.registration.showNotification('メッセージがあります', notificationObject);
 }
