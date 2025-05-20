@@ -1,7 +1,6 @@
 import fs from 'fs';
 import { defineConfig } from 'astro/config';
 import AstroPWA from '@vite-pwa/astro';
-import iconsData from './icons.json';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -25,9 +24,38 @@ export default defineConfig({
         name: 'PWA Practice Apps',
         short_name: 'PWA Apps',
         description: 'PWAサンプル用のアプリケーションになります。',
-        icons: iconsData.icons, // 各サイズごとのアイコンは下記で生成 https://www.pwabuilder.com/imageGenerator
+        icons: [
+          // 各サイズごとのアイコンは下記で生成 https://www.pwabuilder.com/imageGenerator
+          {
+            purpose: 'any',
+            src: '192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            purpose: 'any',
+            src: '512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+          {
+            purpose: 'maskable',
+            src: '192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            purpose: 'maskable',
+            src: '512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+        ],
         background_color: '#ffffff',
         theme_color: '#000000',
+      },
+      workbox: {
+        globPatterns: ['**/*.{html,css,js,ico,png,webp,webmanifest}'], // ここにプリキャッシュ対象としたいファイルを記載する
       },
     }),
   ],

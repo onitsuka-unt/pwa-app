@@ -1,28 +1,44 @@
 ---
-import { pwaInfo } from 'virtual:pwa-info';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { pwaInfo } from 'virtual:pwa-info'; // PWA情報を取得するための仮想モジュール
 ---
+
 <!doctype html>
 <html lang="ja">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-		<script src="/src/scripts/pwa.ts"></script>
-		{ pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> }
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>PWA APP</title>
+    <script src="/src/scripts/pwa.ts"></script>
+    {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> /* ここでPWAに必要なマニフェストやlinkタグを挿入 */}
+  </head>
+  <body>
+    <div class="container">
+      <Header />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
 </html>
 
 <style>
-	*,
-	*::before,
-	*::after {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .container {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 100%;
+    min-height: 100vh;
+  }
 </style>

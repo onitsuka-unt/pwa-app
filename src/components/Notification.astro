@@ -1,22 +1,14 @@
----
-import { BASE_URL } from '@/const';
----
-
-<div>
-  <h1>PWAプッシュ通知チェック</h1>
-  <div class="container">
-    <button data-request-notification>通知を許可する</button>
-    <button data-notification>モック通知を送信</button>
-    <button data-redirect-notification>モック通知を送信して通知からURL遷移</button>
-    <a href=`${BASE_URL}/price`>料金ページへ飛ぶ</a>
-  </div>
+<div class="container">
+  <button data-request-notification>通知を許可する</button>
+  <button data-notification>モック通知を送信</button>
+  <button data-redirect-notification>モック通知を送信して通知からURL遷移</button>
 </div>
 
 <style>
   .container {
     display: inline-grid;
-    row-gap: 24px;
-    margin-inline: 24px;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 24px;
   }
 
   button {

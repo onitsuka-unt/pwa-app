@@ -1,8 +1,20 @@
 ---
+import Cache from '@/components/Cache.astro';
 import Notification from '@/components/Notification.astro';
 import Layout from '@/layouts/Layout.astro';
 ---
 
 <Layout>
-  <Notification />
+  <div class="inner">
+    <h1>PWAプッシュ通知チェック</h1>
+    <Notification />
+    <h1>キャッシュチェック</h1>
+    <Cache />
+  </div>
 </Layout>
+
+<style>
+  .inner {
+    padding-inline: 16px;
+  }
+</style>
