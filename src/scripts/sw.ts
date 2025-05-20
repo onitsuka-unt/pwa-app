@@ -1,18 +1,7 @@
 import { precacheAndRoute } from 'workbox-precaching';
-import { BASE_URL } from '../const';
 
 declare let self: ServiceWorkerGlobalScope;
 precacheAndRoute(self.__WB_MANIFEST);
-
-// Service Worker側でURL遷移を処理するためのイベントリスナーを追加
-// 適切な場合は OS に通知を送ります
-if (Notification.permission === 'granted') {
-  const notificationObject = {
-    body: 'ここをクリックしてメッセージを表示してください。',
-    data: { url: `${self.location.origin}${BASE_URL}/price` },
-  };
-  self.registration.showNotification('メッセージがあります', notificationObject);
-}
 
 // 通知クリックイベントリスナー
 self.addEventListener('notificationclick', (e) => {
