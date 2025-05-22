@@ -8,12 +8,16 @@ import { pwaInfo } from 'virtual:pwa-info'; // PWA情報を取得するための
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>PWA APP</title>
+
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     <script src="/src/scripts/pwa.ts"></script>
-    {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> /* ここでPWAに必要なマニフェストやlinkタグを挿入 */}
+    {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
   </head>
   <body>
     <div class="container">

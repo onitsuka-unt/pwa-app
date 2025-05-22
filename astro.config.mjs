@@ -10,17 +10,17 @@ export default defineConfig({
   ...(isDev ? {} : { base: '/pwa-app/' }),
   integrations: [
     AstroPWA({
-      strategies: 'injectManifest',
-      injectRegister: false, // Service Worker は手動で登録するので false にする
-      srcDir: 'src/scripts', // Service Worker として、登録したいファイルを設定
-      filename: 'sw.ts',
+      strategies: 'injectManifest', // generateSWだとWorkboxがServiceWorkerのファイルを自動的に生成する
+      injectRegister: null, // ServiceWorker登録用のスクリプトを自動挿入するかどうか
+      srcDir: 'src/scripts', // ServiceWorkerとして登録したい自前ファイルを設定
+      filename: 'sw.ts', // ServiceWorkerのファイル名を設定
       devOptions: {
         enabled: true, // 開発環境でPWAを有効にして確認する場合は設定する
         type: 'module', // Service Workerのモジュールを使用する場合は設定する
       },
-      // includeAssets: ['favicon.ico', 'apple-touch-icon.png'], // Service Workerのプリキャッシュに含めるアセット
+      // includeAssets: ['favicon.ico', 'apple-touch-icon.png'], // Service Workerのプリキャッシュに含めるアセット（workboxのglobPatternsで指定してもOK）
       manifest: {
-        display: 'fullscreen',
+        display: 'standalone',
         name: 'PWA Practice Apps',
         short_name: 'PWA Apps',
         description: 'PWAサンプル用のアプリケーションになります。',
