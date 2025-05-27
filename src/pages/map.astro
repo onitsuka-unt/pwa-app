@@ -1,0 +1,191 @@
+---
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout>
+  <div class="container">
+    <div class="map" data-google-map-root></div>
+  </div>
+</Layout>
+
+<style>
+  .container,
+  .map {
+    box-sizing: border-box;
+  }
+
+  .container {
+    height: 100%;
+    max-inline-size: 1720px;
+    margin-inline: auto;
+  }
+
+  .map {
+    height: 100%;
+  }
+</style>
+<style is:global>
+  .popup-bubble {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -100%);
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
+  }
+
+  .popup-bubble-anchor {
+    position: absolute;
+    width: 100%;
+    bottom: 8px;
+    left: 0;
+  }
+
+  .popup-bubble-anchor::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, 0);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid white;
+  }
+
+  .popup-container {
+    cursor: auto;
+    height: 0;
+    position: absolute;
+    width: 200px;
+  }
+</style>
+
+<script>
+  import { mapLoader } from '@/lib/maps/mapLoader';
+  import { MarkerClusterer } from '@googlemaps/markerclusterer';
+  import { createPopupClass, type PopupInstanceType } from '@/lib/maps/createPopupClass';
+  import { GOOGLE_MAPS_ID } from '@/const';
+
+  interface AdvancedMarkerWithUrl extends google.maps.marker.AdvancedMarkerElement {
+    link: string;
+  }
+
+  const initializedMap = async () => {
+    try {
+      // ライブラリを読み込む
+      const mapsLibrary = await mapLoader.importLibrary('maps');
+      const markerLibrary = await mapLoader.importLibrary('marker');
+      const Popup = createPopupClass();
+
+      const { Map } = mapsLibrary;
+      const { AdvancedMarkerElement } = markerLibrary;
+
+      // 地図を作成
+      const map = new Map(document.querySelector('[data-google-map-root]') as HTMLElement, {
+        center: { lat: 31.9077, lng: 131.4202 },
+        zoom: 17,
+        mapId: GOOGLE_MAPS_ID,
+        clickableIcons: false, // ランドマークのクリックを無効化
+        streetViewControl: false,
+      });
+
+      // 各ロケーションに高度なマーカーを追加
+      const markers = locations.map((location) => {
+        // マーカーの作成
+        const marker = new AdvancedMarkerElement({
+          map,
+          position: { lat: location.lat, lng: location.lng },
+          title: location.title,
+          gmpClickable: true,
+        }) as AdvancedMarkerWithUrl;
+
+        // リンク要素を追加
+        marker.link = location.link;
+
+        return marker;
+      });
+
+      let currentPopup: PopupInstanceType | null = null;
+
+      // マーカーをクリックした時にポップアップを表示
+      markers.forEach((marker) => {
+        marker.addEventListener('gmp-click', () => {
+          if (currentPopup) {
+            currentPopup.onRemove();
+            currentPopup = null;
+          }
+
+          // ポップアップの内容を作成
+          const content = document.createElement('div');
+          content.innerHTML = `
+            <h3>${marker.title}</h3>
+            <a href="${marker.link}" target="_blank">詳細を見る</a>
+          `;
+
+          const position = marker.position;
+          if (!!position) map.panTo(position);
+
+          // ポップアップを作成して地図に追加
+          if (!marker.position) return;
+          currentPopup = new Popup(marker.position, content);
+          currentPopup.setMap(map);
+        });
+      });
+
+      // マーカークラスターを作成
+      const clusterer = new MarkerClusterer({ markers, map });
+
+      // クラスターがクリックされたときの処理
+      clusterer.onClusterClick = (_, cluster) => {
+        if (!cluster.markers) return;
+      };
+    } catch (error) {
+      console.error('Google Maps APIの読み込みに失敗しました:', error);
+    }
+  };
+
+  const locations = [
+    {
+      lat: 31.9077,
+      lng: 131.4202,
+      title: 'テスト1',
+      link: 'http://localhost:3000/',
+    },
+    {
+      lat: 31.908,
+      lng: 131.421,
+      title: 'テスト2',
+      link: 'http://localhost:4000/',
+    },
+    {
+      lat: 31.9075,
+      lng: 131.4195,
+      title: 'テスト3',
+      link: 'http://localhost:5000/',
+    },
+    {
+      lat: 31.9082,
+      lng: 131.4208,
+      title: 'テスト4',
+      link: 'http://localhost:6000/',
+    },
+    {
+      lat: 31.9079,
+      lng: 131.4198,
+      title: 'テスト5',
+      link: 'http://localhost:7000/',
+    },
+    {
+      lat: 31.9076,
+      lng: 131.4205,
+      title: 'テスト6',
+      link: 'http://localhost:8000/',
+    },
+  ];
+
+  initializedMap();
+</script>

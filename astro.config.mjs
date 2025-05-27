@@ -12,20 +12,21 @@ export default defineConfig({
     AstroPWA({
       strategies: 'injectManifest', // generateSWだとWorkboxがServiceWorkerのファイルを自動的に生成する
       injectRegister: null, // ServiceWorker登録用のスクリプトを自動挿入するかどうか
+      injectManifest: {
+        globPatterns: ['**/*.{html,css,js,png,svg,ico}'], // キャッシュ対象のファイルを指定する
+      },
       srcDir: 'src/scripts', // ServiceWorkerとして登録したい自前ファイルを設定
       filename: 'sw.ts', // ServiceWorkerのファイル名を設定
       devOptions: {
         enabled: true, // 開発環境でPWAを有効にして確認する場合は設定する
         type: 'module', // Service Workerのモジュールを使用する場合は設定する
       },
-      // includeAssets: ['favicon.ico', 'apple-touch-icon.png'], // Service Workerのプリキャッシュに含めるアセット（workboxのglobPatternsで指定してもOK）
       manifest: {
         display: 'standalone',
         name: 'PWA Practice Apps',
         short_name: 'PWA Apps',
         description: 'PWAサンプル用のアプリケーションになります。',
         icons: [
-          // 各サイズごとのアイコンは下記で生成 https://www.pwabuilder.com/imageGenerator
           {
             purpose: 'any',
             src: '192x192.png',
@@ -53,9 +54,6 @@ export default defineConfig({
         ],
         background_color: '#ffffff',
         theme_color: '#000000',
-      },
-      workbox: {
-        globPatterns: ['**/*.{html,css,js,ico,png,webp,webmanifest}'], // ここにプリキャッシュ対象としたいファイルを記載する
       },
     }),
   ],

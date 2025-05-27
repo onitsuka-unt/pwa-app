@@ -3,5 +3,23 @@ import Layout from '@/layouts/Layout.astro';
 ---
 
 <Layout>
-  <p>Priceページ</p>
+  <p>料金確認ページです</p>
+  <p>画面遷移3秒後に通知が届きます</p>
 </Layout>
+
+<script>
+  window.addEventListener('load', () => {
+    if (Notification.permission !== 'granted') {
+      alert('通知の許可が必要です。ブラウザの設定、またはトップページからから許可を行ってください');
+      return;
+    }
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'SHOW_NOTIFICATION',
+        title: 'ページ遷移しました',
+        body: '新しいページに移動しました！',
+        url: location.href,
+      });
+    }
+  });
+</script>

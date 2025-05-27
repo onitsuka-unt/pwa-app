@@ -1,29 +1,81 @@
 ---
-import Image from 'astro/components/Image.astro';
-import CacheCheckImage01 from '@/assets/images/cache-check_01.jpg';
-import CacheCheckImage02 from '@/assets/images/cache-check_02.jpg';
-import CacheCheckImage03 from '@/assets/images/cache-check_03.jpg';
-import CacheCheckImage04 from '@/assets/images/cache-check_04.jpg';
-import CacheCheckImage05 from '@/assets/images/cache-check_05.jpg';
+import { BASE_URL } from '@/const';
+import Button from '@/components/Button.astro';
 ---
 
 <div class="container">
-  <Image src={CacheCheckImage01} alt="" />
-  <Image src={CacheCheckImage02} alt="" />
-  <Image src={CacheCheckImage03} alt="" />
-  <Image src={CacheCheckImage04} alt="" />
-  <Image src={CacheCheckImage05} alt="" />
+  <Button data-cache>1枚目の画像をキャッシュ化する</Button>
+  <div class="group">
+    <img
+      src=`${BASE_URL}assets/cache-check.jpg`
+      alt="初回読み込み更新後、キャッシュされた状態であればこのaltは表示されません"
+      width="640"
+      height="427"
+    />
+    <img
+      src=`${BASE_URL}assets/img_01.jpg`
+      alt="これらの画像はネットワークから必ずダウンロードされます"
+      width="640"
+      height="427"
+    />
+    <img
+      src=`${BASE_URL}assets/img_02.jpg`
+      alt="これらの画像はネットワークから必ずダウンロードされます"
+      width="640"
+      height="427"
+    />
+    <img
+      src=`${BASE_URL}assets/img_03.jpg`
+      alt="これらの画像はネットワークから必ずダウンロードされます"
+      width="640"
+      height="427"
+    />
+    <img
+      src=`${BASE_URL}assets/img_04.jpg`
+      alt="これらの画像はネットワークから必ずダウンロードされます"
+      width="640"
+      height="956"
+    />
+  </div>
 </div>
 
 <style>
   .container {
     display: grid;
+    row-gap: 16px;
+    justify-items: start;
+  }
+
+  .group {
+    display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 16px;
   }
 
-  .container img {
+  .group img {
     max-width: 100%;
     height: auto;
   }
 </style>
+
+<script>
+  import { BASE_URL, CACHE_NAME } from '@/const';
+  const button = document.querySelector('[data-cache]') as HTMLButtonElement;
+
+  button.addEventListener('click', async () => {
+    const cache = await caches.open(CACHE_NAME);
+    const cachedResponse = await cache.match(`${BASE_URL}assets/cache-check.jpg`);
+
+    // キャッシュが存在する場合は何もしない
+    if (cachedResponse) {
+      console.log('画像はすでにキャッシュされています');
+      return;
+    }
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'CACHE_IMAGE',
+        imageUrl: `${BASE_URL}assets/cache-check.jpg`,
+      });
+    }
+  });
+</script>

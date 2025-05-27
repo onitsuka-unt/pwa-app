@@ -1,0 +1,24 @@
+---
+const { class: className = '', ...rest } = Astro.props;
+---
+
+<button class:list={['button', className]} {...rest}>
+  <slot />
+</button>
+
+<style>
+  .button {
+    padding: 0;
+    appearance: none;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    border-radius: calc(infinity * 1px);
+    padding-inline: 16px;
+    padding-block: 16px;
+    color: #fff;
+    background-color: #000;
+    font-weight: bold;
+    font-size: 16px;
+  }
+</style>
