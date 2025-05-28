@@ -106,13 +106,7 @@ import Layout from '@/layouts/Layout.astro';
         // リンク要素を追加
         marker.link = location.link;
 
-        return marker;
-      });
-
-      let currentPopup: PopupInstanceType | null = null;
-
-      // マーカーをクリックした時にポップアップを表示
-      markers.forEach((marker) => {
+        // マーカークリック時にポップアップを表示
         marker.addEventListener('gmp-click', () => {
           if (currentPopup) {
             currentPopup.onRemove();
@@ -134,7 +128,13 @@ import Layout from '@/layouts/Layout.astro';
           currentPopup = new Popup(marker.position, content);
           currentPopup.setMap(map);
         });
+
+        return marker;
       });
+
+      let currentPopup: PopupInstanceType | null = null;
+
+      // マーカーがクラスターに変化した時に対象のマーカーに表示しているポップアップを削除する
 
       // マーカークラスターを作成
       const clusterer = new MarkerClusterer({ markers, map });
@@ -142,6 +142,7 @@ import Layout from '@/layouts/Layout.astro';
       // クラスターがクリックされたときの処理
       clusterer.onClusterClick = (_, cluster) => {
         if (!cluster.markers) return;
+        console.log(cluster);
       };
     } catch (error) {
       console.error('Google Maps APIの読み込みに失敗しました:', error);
