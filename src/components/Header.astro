@@ -1,11 +1,24 @@
 <header class="header">
   <a href="/" class="link">PWA SAMPLE APP</a>
+  <div class="header-container">
+    <a href="/map/">マップ</a>
+    <a href="/price/">料金</a>
+  </div>
 </header>
 
 <style>
   .header {
     padding-inline: 16px;
     padding-block: 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+
+  .header-container {
+    justify-self: end;
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    column-gap: 16px;
   }
 
   .link {
