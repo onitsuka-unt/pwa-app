@@ -62,13 +62,32 @@ import Layout from '@/layouts/Layout.astro';
     position: absolute;
     width: 200px;
   }
+
+  .cluster-container {
+    position: absolute;
+    bottom: 70%;
+    left: 50%;
+    translate: -50%;
+  }
+
+  .cluster-bubble {
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
+  }
+
+  .cluster-container p {
+    margin: 0;
+  }
 </style>
 
 <script>
   import { mapLoader } from '@/lib/maps/mapLoader';
   import { MarkerClusterer } from '@googlemaps/markerclusterer';
-  import { createPopupClass, type PopupInstanceType } from '@/lib/maps/createPopupClass';
+  import { createPopupClass, type PopupInstanceType } from '@/lib/maps/popup/createPopupClass';
   import { GOOGLE_MAPS_ID } from '@/const';
+  import { removePopup, setupPopupObserver } from '@/lib/maps/popup/utils';
 
   interface AdvancedMarkerWithUrl extends google.maps.marker.AdvancedMarkerElement {
     link: string;
@@ -87,63 +106,105 @@ import Layout from '@/layouts/Layout.astro';
       // 地図を作成
       const map = new Map(document.querySelector('[data-google-map-root]') as HTMLElement, {
         center: { lat: 31.9077, lng: 131.4202 },
-        zoom: 17,
+        zoom: 14,
         mapId: GOOGLE_MAPS_ID,
         clickableIcons: false, // ランドマークのクリックを無効化
         streetViewControl: false,
       });
 
-      // 各ロケーションに高度なマーカーを追加
+      // ポップアップ管理用の変数
+      let currentPopup: PopupInstanceType | null = null;
+      let markerPosition: { lat: number | null; lng: number | null } = { lat: null, lng: null };
+      let markerContainer: HTMLElement | null = null;
+
+      // ポップアップの内容を作成
+      const createMarkerContent = (marker: AdvancedMarkerWithUrl) => {
+        const content = document.createElement('div');
+        content.innerHTML = `
+            <h3>${marker.title}</h3>
+            <a href="${marker.link}" target="_blank">詳細を見る</a>
+          `;
+
+        return content;
+      };
+
+      // クラスターの内容を作成
+      const createClusterContent = (markers: AdvancedMarkerWithUrl[]) => {
+        const content = document.createElement('div');
+        const links = markers.map((marker) => `<a href="${marker.link}" target="_blank">${marker.title}</a>`);
+        content.innerHTML = `${links}`;
+        return content;
+      };
+
+      // マーカーを作成
       const markers = locations.map((location) => {
-        // マーカーの作成
         const marker = new AdvancedMarkerElement({
           map,
           position: { lat: location.lat, lng: location.lng },
           title: location.title,
-          gmpClickable: true,
+          gmpClickable: true, // クリック可能にする
         }) as AdvancedMarkerWithUrl;
 
         // リンク要素を追加
         marker.link = location.link;
 
         // マーカークリック時にポップアップを表示
-        marker.addEventListener('gmp-click', () => {
+        marker.addListener('click', () => {
           if (currentPopup) {
-            currentPopup.onRemove();
-            currentPopup = null;
+            removePopup(currentPopup);
           }
 
-          // ポップアップの内容を作成
-          const content = document.createElement('div');
-          content.innerHTML = `
-            <h3>${marker.title}</h3>
-            <a href="${marker.link}" target="_blank">詳細を見る</a>
-          `;
-
+          // マーカー用のコンテンツと位置を取得
+          const content = createMarkerContent(marker);
           const position = marker.position;
-          if (!!position) map.panTo(position);
 
-          // ポップアップを作成して地図に追加
-          if (!marker.position) return;
-          currentPopup = new Popup(marker.position, content);
+          if (!position) return;
+          // クリック時にマーカーを基準にマップを移動
+          map.panTo(position);
+
+          markerPosition = {
+            lat: position?.lat,
+            lng: position?.lng,
+          } as { lat: number; lng: number };
+          markerContainer = marker?.parentElement as HTMLElement;
+
+          // マーカーを作成してマーカーを監視し、マーカーが非表示になれば削除する
+          currentPopup = new Popup(position, content);
           currentPopup.setMap(map);
+          setupPopupObserver(markerContainer, markerPosition, () => removePopup(currentPopup));
         });
 
         return marker;
       });
 
-      let currentPopup: PopupInstanceType | null = null;
-
-      // マーカーがクラスターに変化した時に対象のマーカーに表示しているポップアップを削除する
-
       // マーカークラスターを作成
-      const clusterer = new MarkerClusterer({ markers, map });
+      new MarkerClusterer({
+        markers,
+        map,
+        onClusterClick: (_, cluster) => {
+          if (currentPopup) {
+            removePopup(currentPopup);
+          }
 
-      // クラスターがクリックされたときの処理
-      clusterer.onClusterClick = (_, cluster) => {
-        if (!cluster.markers) return;
-        console.log(cluster);
-      };
+          // クラスター用のコンテンツと位置を取得
+          const content = createClusterContent(cluster.markers as AdvancedMarkerWithUrl[]);
+          const position = cluster.position;
+
+          if (!position) return;
+          // クリック時にクラスターを基準にマップを移動
+          map.panTo(position);
+          markerPosition = { lat: position.lat(), lng: position.lng() };
+
+          // クラスターのマーカーを取得
+          const clusterMarker = cluster.marker as HTMLElement;
+          markerContainer = clusterMarker.parentElement!;
+
+          // クラスターを作成してクラスターを監視し、クラスターが非表示になれば削除する
+          currentPopup = new Popup(position, content, 'cluster');
+          currentPopup.setMap(map);
+          setupPopupObserver(markerContainer, markerPosition, () => removePopup(currentPopup));
+        },
+      });
     } catch (error) {
       console.error('Google Maps APIの読み込みに失敗しました:', error);
     }
@@ -186,6 +247,104 @@ import Layout from '@/layouts/Layout.astro';
       title: 'テスト6',
       link: 'http://localhost:8000/',
     },
+    {
+      lat: 31.9081,
+      lng: 131.4203,
+      title: 'テスト7',
+      link: 'http://localhost:9000/',
+    },
+    {
+      lat: 31.9078,
+      lng: 131.4207,
+      title: 'テスト8',
+      link: 'http://localhost:10000/',
+    },
+    {
+      lat: 31.91,
+      lng: 131.425,
+      title: 'テスト9',
+      link: 'http://localhost:11000/',
+    },
+    {
+      lat: 31.9101,
+      lng: 131.4251,
+      title: 'テスト10',
+      link: 'http://localhost:12000/',
+    },
+    {
+      lat: 31.9099,
+      lng: 131.4249,
+      title: 'テスト11',
+      link: 'http://localhost:13000/',
+    },
+    {
+      lat: 31.9102,
+      lng: 131.4252,
+      title: 'テスト12',
+      link: 'http://localhost:14000/',
+    },
+
+    // アメリカ
+    // {
+    //   lat: 37.7749,
+    //   lng: -122.4194,
+    //   title: 'San Francisco 1',
+    //   link: 'https://example.com/sf1',
+    // },
+    // {
+    //   lat: 37.775,
+    //   lng: -122.4195,
+    //   title: 'San Francisco 2',
+    //   link: 'https://example.com/sf2',
+    // },
+    // {
+    //   lat: 37.7751,
+    //   lng: -122.4193,
+    //   title: 'San Francisco 3',
+    //   link: 'https://example.com/sf3',
+    // },
+    // {
+    //   lat: 37.7748,
+    //   lng: -122.4192,
+    //   title: 'San Francisco 4',
+    //   link: 'https://example.com/sf4',
+    // },
+    // {
+    //   lat: 37.7752,
+    //   lng: -122.4196,
+    //   title: 'San Francisco 5',
+    //   link: 'https://example.com/sf5',
+    // },
+    // {
+    //   lat: 37.7747,
+    //   lng: -122.4191,
+    //   title: 'San Francisco 6',
+    //   link: 'https://example.com/sf6',
+    // },
+    // {
+    //   lat: 37.7753,
+    //   lng: -122.4197,
+    //   title: 'San Francisco 7',
+    //   link: 'https://example.com/sf7',
+    // },
+    // {
+    //   lat: 37.7746,
+    //   lng: -122.419,
+    //   title: 'San Francisco 8',
+    //   link: 'https://example.com/sf8',
+    // },
+    // {
+    //   lat: 37.7754,
+    //   lng: -122.4198,
+    //   title: 'San Francisco 9',
+    //   link: 'https://example.com/sf9',
+    // },
+    // {
+    //   lat: 37.7745,
+    //   lng: -122.4189,
+    //   title: 'San Francisco 10',
+    //   link: 'https://example.com/sf10',
+    // },
   ];
 
   initializedMap();
