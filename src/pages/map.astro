@@ -62,24 +62,6 @@ import Layout from '@/layouts/Layout.astro';
     position: absolute;
     width: 200px;
   }
-
-  .cluster-container {
-    position: absolute;
-    bottom: 70%;
-    left: 50%;
-    translate: -50%;
-  }
-
-  .cluster-bubble {
-    background-color: white;
-    padding: 5px;
-    border-radius: 5px;
-    box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
-  }
-
-  .cluster-container p {
-    margin: 0;
-  }
 </style>
 
 <script>
@@ -121,9 +103,9 @@ import Layout from '@/layouts/Layout.astro';
       const createMarkerContent = (marker: AdvancedMarkerWithUrl) => {
         const content = document.createElement('div');
         content.innerHTML = `
-            <h3>${marker.title}</h3>
-            <a href="${marker.link}" target="_blank">詳細を見る</a>
-          `;
+          <h3>${marker.title}</h3>
+          <a href="${marker.link}" target="_blank">詳細を見る</a>
+        `;
 
         return content;
       };
@@ -285,66 +267,66 @@ import Layout from '@/layouts/Layout.astro';
     },
 
     // アメリカ
-    // {
-    //   lat: 37.7749,
-    //   lng: -122.4194,
-    //   title: 'San Francisco 1',
-    //   link: 'https://example.com/sf1',
-    // },
-    // {
-    //   lat: 37.775,
-    //   lng: -122.4195,
-    //   title: 'San Francisco 2',
-    //   link: 'https://example.com/sf2',
-    // },
-    // {
-    //   lat: 37.7751,
-    //   lng: -122.4193,
-    //   title: 'San Francisco 3',
-    //   link: 'https://example.com/sf3',
-    // },
-    // {
-    //   lat: 37.7748,
-    //   lng: -122.4192,
-    //   title: 'San Francisco 4',
-    //   link: 'https://example.com/sf4',
-    // },
-    // {
-    //   lat: 37.7752,
-    //   lng: -122.4196,
-    //   title: 'San Francisco 5',
-    //   link: 'https://example.com/sf5',
-    // },
-    // {
-    //   lat: 37.7747,
-    //   lng: -122.4191,
-    //   title: 'San Francisco 6',
-    //   link: 'https://example.com/sf6',
-    // },
-    // {
-    //   lat: 37.7753,
-    //   lng: -122.4197,
-    //   title: 'San Francisco 7',
-    //   link: 'https://example.com/sf7',
-    // },
-    // {
-    //   lat: 37.7746,
-    //   lng: -122.419,
-    //   title: 'San Francisco 8',
-    //   link: 'https://example.com/sf8',
-    // },
-    // {
-    //   lat: 37.7754,
-    //   lng: -122.4198,
-    //   title: 'San Francisco 9',
-    //   link: 'https://example.com/sf9',
-    // },
-    // {
-    //   lat: 37.7745,
-    //   lng: -122.4189,
-    //   title: 'San Francisco 10',
-    //   link: 'https://example.com/sf10',
-    // },
+    {
+      lat: 37.7749,
+      lng: -122.4194,
+      title: 'San Francisco 1',
+      link: 'https://example.com/sf1',
+    },
+    {
+      lat: 37.775,
+      lng: -122.4195,
+      title: 'San Francisco 2',
+      link: 'https://example.com/sf2',
+    },
+    {
+      lat: 37.7751,
+      lng: -122.4193,
+      title: 'San Francisco 3',
+      link: 'https://example.com/sf3',
+    },
+    {
+      lat: 37.7748,
+      lng: -122.4192,
+      title: 'San Francisco 4',
+      link: 'https://example.com/sf4',
+    },
+    {
+      lat: 37.7752,
+      lng: -122.4196,
+      title: 'San Francisco 5',
+      link: 'https://example.com/sf5',
+    },
+    {
+      lat: 37.7747,
+      lng: -122.4191,
+      title: 'San Francisco 6',
+      link: 'https://example.com/sf6',
+    },
+    {
+      lat: 37.7753,
+      lng: -122.4197,
+      title: 'San Francisco 7',
+      link: 'https://example.com/sf7',
+    },
+    {
+      lat: 37.7746,
+      lng: -122.419,
+      title: 'San Francisco 8',
+      link: 'https://example.com/sf8',
+    },
+    {
+      lat: 37.7754,
+      lng: -122.4198,
+      title: 'San Francisco 9',
+      link: 'https://example.com/sf9',
+    },
+    {
+      lat: 37.7745,
+      lng: -122.4189,
+      title: 'San Francisco 10',
+      link: 'https://example.com/sf10',
+    },
   ];
 
   initializedMap();
